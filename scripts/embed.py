@@ -17,11 +17,11 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 print("Using device: {}".format(device))
 
 
-def get_T5_model(t5_dir):
-    print("Loading T5 from: {}".format(t5_dir))
-    model = T5EncoderModel.from_pretrained(t5_dir).to(device)
+def get_T5_model(model_dir):
+    print("Loading T5 from: {}".format(model_dir))
+    model = T5EncoderModel.from_pretrained(model_dir).to(device)
     model = model.eval()
-    vocab = T5Tokenizer.from_pretrained(t5_dir, do_lower_case=False )
+    vocab = T5Tokenizer.from_pretrained(model_dir, do_lower_case=False )
     return model, vocab
 
 
@@ -147,8 +147,9 @@ def create_arg_parser():
 
     # Instantiate the parser
     parser = argparse.ArgumentParser(description=( 
-            'prostT5_embedder.py creates ProstT5 embeddings for a given text '+
-            ' file containing sequence(s) in FASTA-format.') )
+            'embed.py creates ProstT5-Encoder embeddings for a given text '+
+            ' file containing sequence(s) in FASTA-format.' +
+            'Example: python embed.py --input /path/to/some_sequences.fasta --output /path/to/some_embeddings.h5 --half 1 --is_3Di 0 --per_protein 1' ) )
     
     # Required positional argument
     parser.add_argument( '-i', '--input', required=True, type=str,
@@ -161,7 +162,7 @@ def create_arg_parser():
     
     # Required positional argument
     parser.add_argument('--model', required=False, type=str,
-                    default="/mnt/home/mheinzinger/deepppi1tb/language_models/T5_xl_uniref50_v3/",
+                    default="Rostlab/ProstT5",
                     help='Either a path to a directory holding the checkpoint for a pre-trained model or a huggingface repository link.' )
 
     # Optional argument
@@ -198,7 +199,7 @@ def main():
     
     seq_path   = Path( args.input ) # path to input FASTAS
     emb_path   = Path( args.output) # path where embeddings should be stored
-    model_dir  = Path( args.model ) # path/repo_link to checkpoint
+    model_dir  = args.model # path/repo_link to checkpoint
     
     split_char = args.split_char
     id_field   = args.id
