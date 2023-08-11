@@ -166,8 +166,12 @@ aminoAcid_sequences = [ "".join(ts.split(" ")) for ts in decoded_backtranslation
 
 <a name="quick"></a>
 ## 💥&nbsp; Scripts and tutorials
-We will release scripts that simplify embedding extraction and translation between sequence and structure asap.
+Update: we now provide an example colab notebook showing how to run [inverse folding](https://github.com/mheinzinger/ProstT5/blob/main/notebooks/ProstT5_inverseFolding.ipynb) with ProstT5.
+
+
+We will release other scripts that simplify embedding extraction and translation between sequence and structure asap.
 In the meantime, you can easily modify existing [scripts](https://github.com/agemagician/ProtTrans/blob/master/Embedding/prott5_embedder.py) and [colab notebooks](https://colab.research.google.com/drive/1h7F5v5xkE_ly-1bTQSu-1xaLtTP2TnLF?usp=sharing) that explain how to extract embeddings from ProtT5 (only modifications needed: a) change model repository from ProtT5 to ProstT5, b) add prefixes as shown above accordingly and c) cast 3Di to lower-case.
+
 
 <a name="quick"></a>
 ## 📘&nbsp; Training data
