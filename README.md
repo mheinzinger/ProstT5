@@ -3,7 +3,7 @@ Bilingual Language Model for Protein Sequence and Structure
 
 <br/>
 <p align="center">
-    <img width="70%" src="https://github.com/mheinzinger/ProstT5/blob/main/prostt5_sketch2.png" alt="ProstT5 training and inference sketch">
+    <img width="95%" src="https://github.com/mheinzinger/ProstT5/blob/main/prostt5_sketch2.png" alt="ProstT5 training and inference sketch">
 </p>
 <br/>
 
@@ -141,9 +141,9 @@ ids_backtranslation = tokenizer.batch_encode_plus(sequence_examples_backtranslat
 # Example generation configuration for "inverse folding" (3Di-->AA)
 gen_kwargs_fold2AA = {
             "do_sample": True,
-            "top_p" : 0.90,
-            "temperature" : 1.1,
-            "top_k" : 6,
+            "top_p" : 0.85,
+            "temperature" : 1.0,
+            "top_k" : 3,
             "repetition_penalty" : 1.2,
 }
 
@@ -154,7 +154,7 @@ with torch.no_grad():
               attention_mask=ids_backtranslation.attention_mask, 
               max_length=max_len, # max length of generated text
               min_length=min_len, # minimum length of the generated text
-              early_stopping=True, # stop early if end-of-text token is generated
+              #early_stopping=True, # stop early if end-of-text token is generated; only needed for beam-search
               num_return_sequences=1, # return only a single sequence
               **gen_kwargs_fold2AA
   )
@@ -184,4 +184,13 @@ ProstT5 is released under the under terms of the [MIT license](https://chooseali
 
 <a name="quick"></a>
 ## ✏️&nbsp; Citation
-Citation coming soon
+```
+@ARTICLE
+{Heinzinger2023.07.23.550085,
+	author = {Michael Heinzinger and Konstantin Weissenow and Joaquin Gomez Sanchez and Adrian Henkel and Martin Steinegger and Burkhard Rost},
+	title = {ProstT5: Bilingual Language Model for Protein Sequence and Structure},
+	year = {2023},
+	doi = {10.1101/2023.07.23.550085},
+	journal = {bioRxiv}
+}
+```
