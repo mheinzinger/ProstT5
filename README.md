@@ -12,6 +12,13 @@ It is based on [ProtT5-XL-U50](https://huggingface.co/Rostlab/prot_t5_xl_uniref5
 ProstT5 finetunes [ProtT5-XL-U50](https://huggingface.co/Rostlab/prot_t5_xl_uniref50) on translating between protein sequence and structure using 17M proteins with high-quality 3D structure predictions from the AlphaFoldDB.
 Protein structure is converted from 3D to 1D using the 3Di-tokens introduced by [Foldseek](https://github.com/steineggerlab/foldseek).
 
+<a name="quick"></a>
+## 🚀&nbsp; Installation
+ProstT5 is available via huggingface/transformers:
+```console
+pip install transformers
+```
+For more details, please follow the instructions for [transformers installations](https://huggingface.co/docs/transformers/installation).
 
 <a name="quick"></a>
 ## 🚀&nbsp; Quick Start
@@ -174,7 +181,7 @@ In the meantime, you can easily modify existing [scripts](https://github.com/age
 <a name="foldseek"></a>
 ## 💥&nbsp; How to derive 3Di sequences from structures?
 Structure strings (3Di sequences) as defined by [Foldseek](https://github.com/steineggerlab/foldseek) can be derived via the following commands (please, follow [installation instruction for Foldseek](https://github.com/steineggerlab/foldseek#installation) first):
-```
+```console
 foldseek createdb directory_with_PDBs queryDB
 foldseek lndb queryDB_h queryDB_ss_h
 foldseek convert2fasta queryDB_ss queryDB_ss.fasta
