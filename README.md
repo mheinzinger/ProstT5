@@ -168,10 +168,21 @@ aminoAcid_sequences = [ "".join(ts.split(" ")) for ts in decoded_backtranslation
 ## 💥&nbsp; Scripts and tutorials
 Update: we now provide an example colab notebook showing how to run [inverse folding](https://github.com/mheinzinger/ProstT5/blob/main/notebooks/ProstT5_inverseFolding.ipynb) with ProstT5 as well as a script that allows to [extract embeddings](https://github.com/mheinzinger/ProstT5/blob/main/scripts/embed.py).
 
-
 We will release other scripts that simplify embedding extraction and translation between sequence and structure asap.
 In the meantime, you can easily modify existing [scripts](https://github.com/agemagician/ProtTrans/blob/master/Embedding/prott5_embedder.py) and [colab notebooks](https://colab.research.google.com/drive/1h7F5v5xkE_ly-1bTQSu-1xaLtTP2TnLF?usp=sharing) that explain how to extract embeddings from ProtT5 (only modifications needed: a) change model repository from ProtT5 to ProstT5, b) add prefixes as shown above accordingly and c) cast 3Di to lower-case.
 
+<a name="foldseek"></a>
+## 💥&nbsp; How to derive 3Di sequences from structures?
+Structure strings (3Di sequences) as defined by [Foldseek](https://github.com/steineggerlab/foldseek) can be derived via the following commands (please, follow [installation instruction for Foldseek](https://github.com/steineggerlab/foldseek#installation) first):
+```
+foldseek createdb directory_with_PDBs queryDB
+foldseek lndb queryDB_h queryDB_ss_h
+foldseek convert2fasta queryDB_ss queryDB_ss.fasta
+```
+This can be applied on a directory of PDB structures (can be experimental or predicted).
+The 3Di-sequences can be used either to derive embeddings or can be used as starting point for inverse folding. 
+
+Watch out that 3Di sequences output by Foldseek are by default upper-case while ProstT5 expects them to be lower-case to avoid tokenization clash with amino acids.
 
 <a name="quick"></a>
 ## 📘&nbsp; Training data
