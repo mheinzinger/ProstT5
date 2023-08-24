@@ -1,5 +1,5 @@
 # ProstT5
-Bilingual Language Model for Protein Sequence and Structure
+[Bilingual Language Model for Protein Sequence and Structure](https://www.biorxiv.org/content/10.1101/2023.07.23.550085v1)
 
 <br/>
 <p align="center">
@@ -194,12 +194,13 @@ Watch out that 3Di sequences output by Foldseek are by default upper-case while 
 
 <a name="quick"></a>
 ## 📘&nbsp; Training data
-We make our training data publicly available via [huggingface datasets](https://huggingface.co/datasets/adrianhenkel/lucidprots_full_data).
-We will also make PDB files for our training data available on zenodo. 
+We make our training data (3Di- and amino-acid-sequences) publicly available via [huggingface datasets](https://huggingface.co/datasets/adrianhenkel/lucidprots_full_data).
+
+The corresponding PDB files can be downloaded as [Foldcomp databases](https://github.com/steineggerlab/foldcomp) via this [link](https://rostlab.org/~deepppi/prosst5_PDBs.tar).
 
 <a name="quick"></a>
 ## 🚀&nbsp; Training scripts
-For training, we used [this script](https://github.com/huggingface/transformers/blob/main/examples/flax/language-modeling/run_t5_mlm_flax.py) for pre-training on span-based denoising and [this script](https://github.com/huggingface/transformers/blob/main/examples/pytorch/summarization/run_summarization_no_trainer.py) for translation.
+For training, we used [this script](https://github.com/huggingface/transformers/blob/main/examples/flax/language-modeling/run_t5_mlm_flax.py) for pre-training on span-based denoising (first pre-training phase) and [this script](https://github.com/huggingface/transformers/blob/main/examples/pytorch/summarization/run_summarization_no_trainer.py) for translation (second pre-training phase).
 
 <a name="license"></a>
 ## 📘&nbsp; License
