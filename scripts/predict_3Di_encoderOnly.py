@@ -274,7 +274,7 @@ def create_arg_parser():
     parser = argparse.ArgumentParser(description=( 
             'embed.py creates ProstT5-Encoder embeddings for a given text '+
             ' file containing sequence(s) in FASTA-format.' +
-            'Example: python embed.py --input /path/to/some_sequences.fasta --output /path/to/some_embeddings.h5 --half 1 --is_3Di 0 --per_protein 1' ) )
+            'Example: python predict_3Di.py --input /path/to/some_AA_sequences.fasta --output /path/to/some_3Di_sequences.fasta --half 1' ) )
     
     # Required positional argument
     parser.add_argument( '-i', '--input', required=True, type=str,
