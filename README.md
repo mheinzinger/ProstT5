@@ -16,9 +16,18 @@ Protein structure is converted from 3D to 1D using the 3Di-tokens introduced by 
 ## 🚀&nbsp; Installation
 ProstT5 is available via huggingface/transformers:
 ```console
+pip install torch
 pip install transformers
+pip install sentencepiece
 ```
 For more details, please follow the instructions for [transformers installations](https://huggingface.co/docs/transformers/installation).
+
+A recently introduced [change in the T5-tokenizer](https://github.com/huggingface/transformers/pull/24565) results in `UnboundLocalError: cannot access local variable 'sentencepiece_model_pb2` and can either be fixed by installing [this PR](https://github.com/huggingface/transformers/pull/25684) or by manually installing:
+```console
+pip install protobuf
+```
+If you are using a transformer version after [this PR](https://github.com/huggingface/transformers/pull/24565), you will see [this warning](https://github.com/huggingface/transformers/blob/main/src/transformers/models/t5/tokenization_t5.py#L167).
+Explicitly setting `legacy=True` will result in expected behavor and will avoid the warning. You can also safely ignore the warning as `legacy=True` is [the default](https://github.com/huggingface/transformers/blob/main/src/transformers/models/t5/tokenization_t5.py#L175).
 
 <a name="quick"></a>
 ## 🚀&nbsp; Quick Start
