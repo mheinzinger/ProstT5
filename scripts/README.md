@@ -24,6 +24,12 @@ The scripts in this folder simplify usabliity of ProstT5.
 
   This makes it easier to scale 3Di-prediction to metagenomic datasets.
 
+- `generate_foldseek_db.py` creates a Foldseek database based on two FASTA files containing amino-acid sequences and 3Di strings respectively
+  
+  `python generate_foldseek_db.py /path/to/some_AA_sequences.fasta /path/to/some_3Di_sequences.fasta database_name`
+  
+  The FASTA file containing 3Di sequences can be upper or lower case. The script checks that all amino-acid sequences have a corresponding 3Di string. 
+
 
 In all cases, you can adjust the [batch-size](https://github.com/mheinzinger/ProstT5/blob/main/scripts/translate.py#L126)/speed according to your available (GPU) resources.
 If you have batch_size>1 for translate.py, there can be minimal [length mismatches](https://github.com/mheinzinger/ProstT5/blob/main/scripts/translate.py#L218) between source and target. To ensure identical length, set batch_size=1 for translate.py. This does not affect embedding generation as embeddings are solely derived from the Encoder.
