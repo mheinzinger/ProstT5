@@ -298,15 +298,13 @@ def main():
 
     model_dir = Path( args.model ) # path/repo_link to checkpoint
     
-    is_3Di = False if int(args.is_3Di) == 0 else True
-    
     split_char = args.split_char
     id_field   = args.id
 
     half_precision = False if int(args.half)   == 0 else True
     is_3Di         = False if int(args.is_3Di) == 0 else True
     
-    print(f"is_3Di is {is_3Di}. (0=expect input to be 3Di, 1= input is AA")
+    print(f"is_3Di is {is_3Di}. (0=expect input to be AA, 1= input is 3Di")
     gen_configs = GenConfigs()
     # if input is 3Di use config to translate from 3Di to AA (ss2aa) 
     gen_config = gen_configs.configs["ss2aa"]  if is_3Di else gen_configs.configs["aa2ss"]
