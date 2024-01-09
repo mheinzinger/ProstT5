@@ -194,12 +194,12 @@ def get_embeddings(seq_path, out_path, model_dir, split_char, id_field, half_pre
     predictor = load_predictor()
 
     if half_precision:
-        model = model.half()
-        predictor = predictor.half()
+        model.half()
+        predictor.half()
         print("Using models in half-precision.")
     else:
-        model = model.full()
-        predictor = predictor.full()
+        model.to(torch.float32)
+        predictor.to(torch.float32)
         print("Using models in full-precision.")
 
     print('########################################')
