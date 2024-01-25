@@ -221,10 +221,8 @@ def get_embeddings(seq_path, out_path, model_dir, split_char, id_field, half_pre
     batch = list()
     standard_aa = "ACDEFGHIKLMNPQRSTVWY"
     standard_aa_dict = {aa: aa for aa in standard_aa}
-    # Update non-standard amino acids
-    standard_aa_dict.update({"B": "D", "Z": "E", "J": "L"})
     for seq_idx, (pdb_id, seq) in enumerate(seq_dict, 1):
-        # replace the rest of the non-standard amino acids with 'X'
+        # replace the non-standard amino acids with 'X'
         seq = ''.join([standard_aa_dict.get(aa, 'X') for aa in seq])
         #seq = seq.replace('U', 'X').replace('Z', 'X').replace('O', 'X')
         seq_len = len(seq)
