@@ -159,7 +159,7 @@ def download_file(url, local_path):
     return None
 
 
-def load_predictor(weights_link="https://rostlab.org/~deepppi/prostt5/cnn_chkpnt/model.pt"):
+def load_predictor(weights_link="https://github.com/mheinzinger/ProstT5/raw/main/cnn_chkpnt/model.pt"):
     model = CNN()
     checkpoint_p = Path.cwd() / "cnn_chkpnt" / "model.pt"
     # if no pre-trained model is available, yet --> download it
