@@ -75,8 +75,6 @@ def read_fasta( fasta_path, split_char, id_field, is_3Di ):
             # get uniprot ID from header and create new entry
             if line.startswith('>'):
                 uniprot_id = line.replace('>', '').strip().split(split_char)[id_field]
-                # replace tokens that are mis-interpreted when loading h5
-                uniprot_id = uniprot_id.replace("/","_").replace(".","_")
                 sequences[ uniprot_id ] = ''
             else:
                 # repl. all white-space chars and join seqs spanning multiple lines
