@@ -74,8 +74,6 @@ def read_fasta(fasta_path, split_char, id_field):
             if line.startswith('>'):
                 uniprot_id = line.replace(
                     '>', '').strip().split(split_char)[id_field]
-                # replace tokens that are mis-interpreted when loading h5
-                uniprot_id = uniprot_id.replace("/", "_").replace(".", "_")
                 sequences[uniprot_id] = ''
             else:
                 s = ''.join(line.split()).replace("-", "")
