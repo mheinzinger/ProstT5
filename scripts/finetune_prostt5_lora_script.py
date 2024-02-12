@@ -49,6 +49,7 @@ import shutil
 import sys
 import time
 from argparse import RawTextHelpFormatter
+from Bio.PDB import PDBParser
 
 import datasets
 import matplotlib.pyplot as plt
@@ -86,6 +87,34 @@ os.environ["WORLD_SIZE"] = "1"
 
 
 
+def get_pldtt_info(pdb_file):
+    parser = PDBParser()
+    try:
+        structure = parser.get_structure('structure', pdb_file)
+    except:
+        logger.error(f"{pdb_file} does not exist.")
+    
+    pldtt_info = {}
+    
+    for model in structure:
+        for chain in model:
+            i = 0
+            for residue in chain:
+                # Assuming PLDTT information is stored in the B-factor column
+                # You may need to adjust this depending on how the PLDTT information is represented in your PDB file
+                # we have only monomers, so simple index loop !
+                pldtt_value = residue["CA"].get_bfactor() if "CA" in residue else None
+                
+                if pldtt_value is not None:
+                    #residue_id = (chain.id, residue.id[1], residue.resname)
+                    pldtt_info[i] = pldtt_value
+                else: # 0 otherwise
+                    pldtt_info[i] = 0
+                i += 1
+    
+    return pldtt_info
+
+
 def get_input():
     parser = argparse.ArgumentParser(
         description="finetune_lora_script.py",
@@ -111,6 +140,22 @@ def get_input():
         action="store",
         help="Colabfold 3Di FASTA test dataset",
     )
+    parser.add_argument(
+        "--mask",
+        help="Flag to Mask pLDDT resudues under --mash_threshold", 
+        action="store_true"
+    )
+    parser.add_argument(
+        "--pdbdir",
+        action="store",
+        help="Directory containing pdbs for train and test FASTA ",
+    )
+    parser.add_argument(
+        "--mask_threshold", 
+        default=70, 
+        action="store", 
+        type=int, 
+        help="mask all residues where the pLDDT < this value. Defaults to 70.")
     parser.add_argument("-o", "--outdir", action="store", help="output directory.")
     parser.add_argument("-s", "--seed", default=13, action="store", type=int, help="seed")
     parser.add_argument("-b", "--batchsize", default=1, action="store", type=int, help="batchsize for GPU")
@@ -120,7 +165,8 @@ def get_input():
     parser.add_argument(
         "-m",
         "--model_dir",
-        help="Path to save ProstT5_fp16 model to. Will automatically download"
+        help="Path to save ProstT5_fp16 model to. Will automatically download",
+        default="model"
     )
     parser.add_argument(
         "-a",
@@ -186,6 +232,9 @@ def main():
     logger.info(f"Pandas version:  {pd.__version__}")
     logger.info(f"Transformers version:  {transformers.__version__}")
     logger.info(f"Datasets version: {datasets.__version__}")
+    logger.info(f"--mask {args.mask}")
+    if args.mask is True:
+        logger.info(f"Residues with pLDDT under --mask_threshold {args.mask_threshold} will be masked")
 
     logger.info("Creating dataset")
 
@@ -221,18 +270,10 @@ def main():
     # adds log file
     logger.add(log_file)
 
-    logger.info(f"Torch version: {torch.__version__}")
-    logger.info(f"CUDA available: {torch.cuda.is_available()}" )
-    logger.info(f"Cuda version:  {torch.version.cuda}")
-    logger.info(f"Numpy version:  {np.__version__}")
-    logger.info(f"Pandas version:  {pd.__version__}")
-    logger.info(f"Transformers version:  {transformers.__version__}")
-    logger.info(f"Datasets version: {datasets.__version__}")
 
-    logger.info("Creating dataset")
 
     # AA Sequence File
-    logger.info("Reading AA Fastas")
+    logger.info("Reading train set AA Fastas")
 
     # Load the AA fasta files
     fasta_path = args.trainaafasta
@@ -245,12 +286,45 @@ def main():
             for record in SeqIO.parse(fasta_file, "fasta")
         ]
 
+    logger.info(f"Masking all train set residues where pLDDT < {args.mask_threshold}")
+
+    # if we are masking by plddt
+    # make the train set
+
+    if args.mask is True:
+        sequences_to_remove = []
+        for name_seq_mask in sequences:
+
+            record_id = name_seq_mask[0]
+            # name_seq_mask[2] is the mask
+            # pdb file name must match record id!
+            pdb_file = os.path.join(args.pdbdir, record_id)
+
+            plddt_by_aa_index = get_pldtt_info(pdb_file)
+
+            # update the mask
+            for i in range(len(name_seq_mask[2])):
+                if plddt_by_aa_index[i] < args.mask_threshold:
+                    name_seq_mask[2][i] = 0
+
+            # remove is mask all 0s or else LoRA cant evaluate properly
+            all_zeros = all(val == 0 for val in name_seq_mask[2])
+            if all_zeros:
+                logger.info(f"Removing {record_id} from the train set as all residues had pLDDT < {args.mask_threshold}")
+                sequences_to_remove.append(name_seq_mask)
+
+
+        # remove the sequences with only 0 plDDTs - bad quality sequences and will break LoRA evaluation
+        for seq_to_remove in sequences_to_remove:
+            sequences.remove(seq_to_remove)
+
     # Create dataframe
     df_train_aa = pd.DataFrame(sequences, columns=["name", "sequence", "mask"])
     df_train_aa["set"] = 'train'
 
-
     fasta_path = args.validaafasta
+
+    logger.info("Reading validation set AA Fastas")
 
     # mask 0s if not a standard AA
     standard_aa_set = set("ACDEFGHIKLMNPQRSTVWY")
@@ -259,6 +333,39 @@ def main():
             [record.id, str(record.seq), [0 if char not in standard_aa_set else 1 for char in str(record.seq)]]
             for record in SeqIO.parse(fasta_file, "fasta")
         ]
+
+    # AA Sequence File
+    logger.info(f"Masking all validation set residues where pLDDT < {args.mask_threshold}")
+
+    # if we are masking by plddt
+    # pdb file name must match record id!
+    if args.mask is True:
+        sequences_to_remove = []
+        for name_seq_mask in sequences:
+
+            record_id = name_seq_mask[0]
+            # name_seq_mask[2] is the mask
+
+            pdb_file = os.path.join(args.pdbdir, record_id)
+
+            plddt_by_aa_index = get_pldtt_info(pdb_file)
+
+            # update the mask
+            for i in range(len(name_seq_mask[2])):
+                if plddt_by_aa_index[i] < args.mask_threshold:
+                    name_seq_mask[2][i] = 0
+
+            # remove is mask all 0s or else LoRA cant evaluate properly
+            all_zeros = all(val == 0 for val in name_seq_mask[2])
+            if all_zeros:
+                logger.info(f"Removing {record_id} from the validation set as all residues had pLDDT < {args.mask_threshold}")
+                sequences_to_remove.append(name_seq_mask)
+
+
+        # remove the sequences with only 0 plDDTs - bad quality sequences and will break LoRA evaluation
+        for seq_to_remove in sequences_to_remove:
+            sequences.remove(seq_to_remove)
+
 
     df_valid_aa = pd.DataFrame(sequences, columns=["name", "sequence", "mask"])
     df_valid_aa["set"] = 'valid'
@@ -299,6 +406,7 @@ def main():
     # train
     threedi_fasta_path = args.trainthreedifasta
 
+
     sequences = []
     with open(threedi_fasta_path, "r") as fasta_file:
         for record in SeqIO.parse(fasta_file, "fasta"):
@@ -325,6 +433,7 @@ def main():
 
     # Create dataframe
     df_valid_3di = pd.DataFrame(sequences, columns=["name", "label"])
+
 
     # combine
     df_3di = pd.concat([df_train_3di, df_valid_3di], ignore_index=True)
@@ -941,3 +1050,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
