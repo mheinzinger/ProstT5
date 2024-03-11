@@ -104,7 +104,7 @@ def write_probs(predictions, out_path):
 
 
 def write_predictions(predictions, out_path):
-    ss_mapping = {
+    aa_mapping = {
         0: "A",
         1: "C",
         2: "D",
@@ -130,7 +130,7 @@ def write_predictions(predictions, out_path):
     with open(out_path, 'w+') as out_f:
         out_f.write('\n'.join(
             [">{}\n{}".format(
-                seq_id, "".join(list(map(lambda yhat: ss_mapping[int(yhat)], yhats))))
+                seq_id, "".join(list(map(lambda yhat: aa_mapping[int(yhat)], yhats))))
              for seq_id, (yhats, _) in predictions.items()
              ]
         ))
@@ -161,7 +161,7 @@ def download_file(url, local_path):
 
 def load_predictor(weights_link="https://github.com/mheinzinger/ProstT5/raw/main/cnn_chkpnt_AA_CNN/model.pt"):
     model = CNN()
-    checkpoint_p = Path.cwd() / "cnn_chkpnt" / "model.pt"
+    checkpoint_p = Path.cwd() / "cnn_AAto3Di_chkpnt" / "model.pt"
     # if no pre-trained model is available, yet --> download it
     if not checkpoint_p.exists():
         download_file(weights_link, checkpoint_p)
