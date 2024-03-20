@@ -20,7 +20,12 @@ import torch.nn.functional as F
 from transformers import T5EncoderModel, T5Tokenizer
 
 
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda:0')
+elif torch.backends.mps.is_available():
+    device = torch.device('mps')
+else:
+    device = torch.device('cpu')
 print("Using device: {}".format(device))
 
 
