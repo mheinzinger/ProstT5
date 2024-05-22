@@ -211,6 +211,11 @@ The corresponding PDB files can be downloaded as [Foldcomp databases](https://gi
 ## 🚀&nbsp; Training scripts
 For training, we used [this script](https://github.com/huggingface/transformers/blob/main/examples/flax/language-modeling/run_t5_mlm_flax.py) for pre-training on span-based denoising (first pre-training phase) and [this script](https://github.com/huggingface/transformers/blob/main/examples/pytorch/summarization/run_summarization_no_trainer.py) for translation (second pre-training phase).
 
+<a name="zenodo"></a>
+## 📘&nbsp; Zenodo Backup Copy
+
+If you cannot access the model via Hugging Face, a copy of ProstT5 (fp16) is available on Zenodo [here](https://zenodo.org/records/11234657).
+
 <a name="license"></a>
 ## 📘&nbsp; License
 ProstT5 is released under the under terms of the [MIT license](https://choosealicense.com/licenses/mit/).
