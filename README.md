@@ -38,7 +38,7 @@ import torch
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 # Load the tokenizer
-tokenizer = T5Tokenizer.from_pretrained('Rostlab/ProstT5', do_lower_case=False).to(device)
+tokenizer = T5Tokenizer.from_pretrained('Rostlab/ProstT5', do_lower_case=False)
 
 # Load the model
 model = T5EncoderModel.from_pretrained("Rostlab/ProstT5").to(device)
