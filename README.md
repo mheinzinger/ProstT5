@@ -113,7 +113,7 @@ sequence_examples = [" ".join(list(re.sub(r"[UZOB]", "X", sequence))) for sequen
 sequence_examples = [ "<AA2fold>" + " " + s for s in sequence_examples]
 
 # tokenize sequences and pad up to the longest sequence in the batch
-ids = tokenizer.batch_encode_plus(sequences_examples,
+ids = tokenizer.batch_encode_plus(sequence_examples,
                                   add_special_tokens=True,
                                   padding="longest",
                                   return_tensors='pt').to(device)
