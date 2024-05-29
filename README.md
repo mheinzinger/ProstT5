@@ -87,10 +87,11 @@ Example for how to translate between sequence and structure (3Di) using ProstT5:
 ```python
 from transformers import T5Tokenizer, AutoModelForSeq2SeqLM
 import torch
+import re
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 # Load the tokenizer
-tokenizer = T5Tokenizer.from_pretrained('Rostlab/ProstT5', do_lower_case=False).to(device)
+tokenizer = T5Tokenizer.from_pretrained('Rostlab/ProstT5', do_lower_case=False)
 
 # Load the model
 model = AutoModelForSeq2SeqLM.from_pretrained("Rostlab/ProstT5").to(device)
@@ -102,8 +103,8 @@ model.full() if device=='cpu' else model.half()
 # Amino acid sequences are expected to be upper-case ("PRTEINO" below)
 # while 3Di-sequences need to be lower-case.
 sequence_examples = ["PRTEINO", "SEQWENCE"]
-min_len = min([ len(s) for s in folding_example])
-max_len = max([ len(s) for s in folding_example])
+min_len = min([ len(s) for s in sequence_examples])
+max_len = max([ len(s) for s in sequence_examples])
 
 # replace all rare/ambiguous amino acids by X (3Di sequences does not have those) and introduce white-space between all sequences (AAs and 3Di)
 sequence_examples = [" ".join(list(re.sub(r"[UZOB]", "X", sequence))) for sequence in sequence_examples]
@@ -112,10 +113,10 @@ sequence_examples = [" ".join(list(re.sub(r"[UZOB]", "X", sequence))) for sequen
 sequence_examples = [ "<AA2fold>" + " " + s for s in sequence_examples]
 
 # tokenize sequences and pad up to the longest sequence in the batch
-ids = tokenizer.batch_encode_plus(sequences_example,
+ids = tokenizer.batch_encode_plus(sequence_examples,
                                   add_special_tokens=True,
                                   padding="longest",
-                                  return_tensors='pt').to(device))
+                                  return_tensors='pt').to(device)
 
 # Generation configuration for "folding" (AA-->3Di)
 gen_kwargs_aa2fold = {
