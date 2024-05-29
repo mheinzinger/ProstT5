@@ -115,7 +115,7 @@ sequence_examples = [ "<AA2fold>" + " " + s for s in sequence_examples]
 ids = tokenizer.batch_encode_plus(sequences_example,
                                   add_special_tokens=True,
                                   padding="longest",
-                                  return_tensors='pt').to(device))
+                                  return_tensors='pt').to(device)
 
 # Generation configuration for "folding" (AA-->3Di)
 gen_kwargs_aa2fold = {
