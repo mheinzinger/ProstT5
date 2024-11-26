@@ -326,7 +326,7 @@ def create_arg_parser():
                         help='A path for saving the 3Di translations in FASTA format.')
 
     # Required positional argument
-    parser.add_argument('--model', required=True, type=str,
+    parser.add_argument('--model', required=False, type=str,
                         help='A path to a directory for saving the checkpoint of the pre-trained model.')
 
     # Optional argument
