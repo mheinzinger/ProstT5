@@ -44,7 +44,7 @@ tokenizer = T5Tokenizer.from_pretrained('Rostlab/ProstT5', do_lower_case=False)
 model = T5EncoderModel.from_pretrained("Rostlab/ProstT5").to(device)
 
 # only GPUs support half-precision currently; if you want to run on CPU use full-precision (not recommended, much slower)
-model.full() if device=='cpu' else model.half()
+model.float() if device.type=='cpu' else model.half()
 
 # prepare your protein sequences/structures as a list.
 # Amino acid sequences are expected to be upper-case ("PRTEINO" below)
@@ -97,7 +97,7 @@ tokenizer = T5Tokenizer.from_pretrained('Rostlab/ProstT5', do_lower_case=False)
 model = AutoModelForSeq2SeqLM.from_pretrained("Rostlab/ProstT5").to(device)
 
 # only GPUs support half-precision currently; if you want to run on CPU use full-precision (not recommended, much slower)
-model.full() if device=='cpu' else model.half()
+model.float() if device.type=='cpu' else model.half()
 
 # prepare your protein sequences/structures as a list.
 # Amino acid sequences are expected to be upper-case ("PRTEINO" below)
