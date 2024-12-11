@@ -206,7 +206,7 @@ Watch out that 3Di sequences output by Foldseek are by default upper-case while 
 ## 📘&nbsp; Training data
 We make our training data (3Di- and amino-acid-sequences) publicly available via [huggingface datasets](https://huggingface.co/datasets/Rostlab/ProstT5Dataset) (fixed: now using ProstT5 tokenizer).
 
-The corresponding PDB files can be downloaded as [Foldcomp databases](https://github.com/steineggerlab/foldcomp) via this [link](https://rostlab.org/~deepppi/prosst5_PDBs.tar).
+The corresponding PDB files can be downloaded as [Foldcomp databases](https://github.com/steineggerlab/foldcomp) via this [link](https://zenodo.org/records/14361626).
 
 <a name="quick"></a>
 ## 🚀&nbsp; Training scripts
