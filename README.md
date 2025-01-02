@@ -35,6 +35,7 @@ Example for how to derive embeddings from ProstT5:
 ```python
 from transformers import T5Tokenizer, T5EncoderModel
 import torch
+import re
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 # Load the tokenizer
@@ -62,14 +63,14 @@ sequence_examples = [ "<AA2fold>" + " " + s if s.isupper() else "<fold2AA>" + " 
                     ]
 
 # tokenize sequences and pad up to the longest sequence in the batch
-ids = tokenizer.batch_encode_plus(sequences_example,
+ids = tokenizer.batch_encode_plus(sequence_examples,
                                   add_special_tokens=True,
                                   padding="longest",
-                                  return_tensors='pt').to(device))
+                                  return_tensors='pt').to(device)
 
 # generate embeddings
 with torch.no_grad():
-    embedding_rpr = model(
+    embedding_repr = model(
               ids.input_ids, 
               attention_mask=ids.attention_mask
               )
@@ -153,7 +154,7 @@ sequence_examples_backtranslation = [ "<fold2AA>" + " " + s for s in decoded_tra
 ids_backtranslation = tokenizer.batch_encode_plus(sequence_examples_backtranslation,
                                   add_special_tokens=True,
                                   padding="longest",
-                                  return_tensors='pt').to(device))
+                                  return_tensors='pt').to(device)
 
 # Example generation configuration for "inverse folding" (3Di-->AA)
 gen_kwargs_fold2AA = {
@@ -174,7 +175,7 @@ with torch.no_grad():
               #early_stopping=True, # stop early if end-of-text token is generated; only needed for beam-search
               num_return_sequences=1, # return only a single sequence
               **gen_kwargs_fold2AA
-  )
+)
 # Decode and remove white-spaces between tokens
 decoded_backtranslations = tokenizer.batch_decode( backtranslations, skip_special_tokens=True )
 aminoAcid_sequences = [ "".join(ts.split(" ")) for ts in decoded_backtranslations ] # predicted amino acid strings
@@ -225,12 +226,18 @@ ProstT5 is released under the under terms of the [MIT license](https://chooseali
 <a name="quick"></a>
 ## ✏️&nbsp; Citation
 ```
-@ARTICLE
-{Heinzinger2023.07.23.550085,
-	author = {Michael Heinzinger and Konstantin Weissenow and Joaquin Gomez Sanchez and Adrian Henkel and Martin Steinegger and Burkhard Rost},
-	title = {ProstT5: Bilingual Language Model for Protein Sequence and Structure},
-	year = {2023},
-	doi = {10.1101/2023.07.23.550085},
-	journal = {bioRxiv}
+@article{10.1093/nargab/lqae150,
+    author = {Heinzinger, Michael and Weissenow, Konstantin and Sanchez, Joaquin Gomez and Henkel, Adrian and Mirdita, Milot and Steinegger, Martin and Rost, Burkhard},
+    title = {Bilingual language model for protein sequence and structure},
+    journal = {NAR Genomics and Bioinformatics},
+    volume = {6},
+    number = {4},
+    pages = {lqae150},
+    year = {2024},
+    month = {11},
+    issn = {2631-9268},
+    doi = {10.1093/nargab/lqae150},
+    url = {https://doi.org/10.1093/nargab/lqae150},
+    eprint = {https://academic.oup.com/nargab/article-pdf/6/4/lqae150/60777547/lqae150.pdf},
 }
 ```
