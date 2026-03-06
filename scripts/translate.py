@@ -59,7 +59,7 @@ def get_T5_model(model_dir,half_precision):
     print("##########################")
     print(f"Loading model from: {model_dir}")
     print("##########################")
-    model=AutoModelForSeq2SeqLM.from_pretrained(model_dir).to(device)
+    model=AutoModelForSeq2SeqLM.from_pretrained(model_dir, use_safetensors=True).to(device)
     model=model.eval()
     if half_precision:
         model=model.half()
